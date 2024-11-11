@@ -31,13 +31,49 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+        scores.entry(team_1_name)
+            .and_modify(|ts: &mut TeamScores| {
+                ts.goals_scored += team_1_score;
+                ts.goals_conceded += team_2_score;
+            })
+            .or_insert(
+                TeamScores { 
+                    goals_scored: team_1_score,
+                    goals_conceded: team_2_score, 
+                }
+            );
+        scores.entry(team_2_name)
+            .and_modify(|ts: &mut TeamScores| {
+                ts.goals_scored += team_2_score;
+                ts.goals_conceded += team_1_score;
+            })
+            .or_insert(
+                TeamScores{
+                    goals_scored: team_2_score,
+                    goals_conceded: team_1_score,
+                }
+            );
     }
-
     scores
 }
 
 fn main() {
     // You can optionally experiment here.
+    const RESULTS: &str = "England,France,4,2
+France,Italy,3,1
+Poland,Spain,2,0
+Germany,England,2,1
+England,Spain,1,0";
+    println!("{}", RESULTS);
+    let scores = build_scores_table(RESULTS);
+    println!("");
+    let team = scores.get("England").unwrap();
+    println!("England Goals Scored: {}. Expect 6.", team.goals_scored);
+    println!("England Goals Conceeded: {}. Expect 4.", team.goals_conceded);
+    println!("");
+    let team = scores.get("Spain").unwrap();
+    println!("Spain Goals Scored: {}. Expect 0.", team.goals_scored);
+    println!("Spain Goals Conceeded: {}. Expect 3.", team.goals_conceded);
 }
 
 #[cfg(test)]
