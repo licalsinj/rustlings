@@ -1,8 +1,0 @@
-fn main() {
-    let x: u8 = 9; // 0 to 255
-    let y: i8 = 10; // -128 to 127
-    
-    let z = x + y;
-    println!("{}",z);
-
-}
